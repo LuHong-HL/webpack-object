@@ -14,6 +14,17 @@ function component () {
   debounce(()=>{
     console.log('debounce')
   })()
+
+  const btn = document.createElement('button')
+  btn.innerHTML = 'Click me and look at the console'
+  element.appendChild(btn)
+  btn.onclick = () => {
+    return import(/* webpackChunkName: "print" */ './print.js').then(module => {
+      const print = module.default
+      print()
+    })
+  }
+
   return element
 }
 
