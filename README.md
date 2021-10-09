@@ -302,4 +302,49 @@ import(/* webpackPreload: true */ 'ChartingLibrary')
 
 ## 缓存
 
+浏览器使用一种名为 缓存 的技术。可以通过命中缓存，以降低网络流量，使网站加载速度更快，然而，如果我们在部署新版本时不更改资源的文件名，浏览器可能会认为它没有被更新，就会使用它的缓存版本。由于缓存的存在，当你需要获取新的代码时，就会显得很棘手。
+
+### 输出文件的文件名(output filename)
+
+通过替换 output.filename 中的 substitutions 设置，来定义输出文件的名称。[contenthash] substitution 将根据资源内容创建出唯一 hash。当资源内容发生变化时，[contenthash] 也会发生变化。
+
+```javascript
+  module.exports = {
+    output: {
+     filename: '[name].[contenthash].js',
+    },
+  };
+```
+
+### * 提取引导模板(extracting boilerplate)
+
+- webpack 还提供了一个优化功能，可使用 optimization.runtimeChunk 选项将 runtime 代码拆分为一个单独的 chunk。将其设置为 single 来为所有 chunk 创建一个 runtime bundle
+
+```javascript
+  module.exports = {
+     optimization: {
+       runtimeChunk: 'single',
+   },
+  };
+```
+
+- 推荐将第三方库(library)（例如 lodash 或 react）提取到单独的 vendor chunk 文件中。因为通过实现以上步骤，利用 client 的长效缓存机制，命中缓存来消除请求，并减少向 server 获取资源，同时还能保证 client 代码和 server 代码版本一致。
+
+```javascript
+  module.exports = {
+     optimization: {
+       moduleIds: 'deterministic', // 因为每个 module.id 会默认地基于解析顺序(resolve order)进行增量。也就是说，当解析顺序发生变化，ID 也会随之改变。可通过次配置修复。
+       runtimeChunk: 'single',
+       splitChunks: {
+           cacheGroups: {
+             vendor: {
+               test: /[\\/]node_modules[\\/]/,
+               name: 'vendors',
+               chunks: 'all',
+             },
+           },
+     },
+   },
+  };
+```
 
