@@ -352,3 +352,32 @@ import(/* webpackPreload: true */ 'ChartingLibrary')
 
 除了打包应用程序，webpack 还可以用于打包 JavaScript library。
 
+## 环境变量
+
+区分在 开发环境 和 生产环境 之间的差异，需要环境变量
+
+ - webpack 命令行 环境配置 的 --env 参数，可以允许你传入任意数量的环境变量。
+   + 当 webpack 配置导出为函数时，会接收到一个 "environment" 的参数
+
+```javascript
+// webpakc.config.js 文件
+module.exports = function(env, argv) {}
+```
+
+| Invocation | Resulting environment |
+| --- | --- |
+| npx webpack --env prod | { prod: true } |
+| npx webpack --env prod --env min | { prod: true, min: true } |
+| npx webpack --env platform=app --env production | { platform: "app", production: true } |
+| npx webpack --env foo=bar=app | { foo: "bar=app"} |
+| npx webpack --env app.platform="staging" --env app.name="test" | { app: { platform: "staging", name: "test" } |
+
+- 你可以使用 --node-env 选项来设置 process.env.NODE_ENV
+  + 如果你不明确的设置 mode，mode 选项的值会被 --node-env 覆盖。例如 --node-env production 时，会把 process.env.NODE_ENV 和 mode 均设置为 'production'。
+
+**TIP : 如果需要定义全部变量的话，可以考虑下面两种库**
+
+- DefinePlugin 的作用：是设置浏览器环境下能读取到的 "全局变量"，直接通过 key 读取，在 node 环境下是无法读取到的
+- cross-env 的作用：是通过命令行设置环境变量 NODE_ENV，使 node 环境下能读取到，通过 process.env.NODE_ENV 读取
+- 如果在DefinePlugin 里设置的 key 是 process.env.NODE_ENV ，会覆盖 webpack 通过 mode 模式设置的环境变量的值
+
