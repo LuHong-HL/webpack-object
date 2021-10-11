@@ -348,3 +348,7 @@ import(/* webpackPreload: true */ 'ChartingLibrary')
   };
 ```
 
+## 创建 library
+
+除了打包应用程序，webpack 还可以用于打包 JavaScript library。
+
