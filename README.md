@@ -381,3 +381,28 @@ module.exports = function(env, argv) {}
 - cross-env 的作用：是通过命令行设置环境变量 NODE_ENV，使 node 环境下能读取到，通过 process.env.NODE_ENV 读取
 - 如果在DefinePlugin 里设置的 key 是 process.env.NODE_ENV ，会覆盖 webpack 通过 mode 模式设置的环境变量的值
 
+## 构建性能
+
+### 通用环境
+
+- loader
+将 loader 应用于最少数量的必要模块。
+
+- 小即是快(smaller = faster)
+减少编译结果的整体大小，以提高构建性能。尽量保持 chunk 体积小。
+
+### 开发环境
+
+- 在内存中编译
+下面几个工具通过在内存中（而不是写入磁盘）编译和 serve 资源来提高性能:
++ `webpack-dev-server`
++ `webpack-hot-middleware`
++ `webpack-dev-middleware`
+
+- Devtool
+需要注意的是不同的 devtool 设置，会导致性能差异。
+在大多数情况下，最佳选择是 `eval-cheap-module-source-map`。
+
+### 生产环境
+
+**不要为了很小的性能收益，牺牲应用程序的质量！** 注意，在大多数情况下，优化代码质量比构建性能更重要。
