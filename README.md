@@ -406,3 +406,90 @@ module.exports = function(env, argv) {}
 ### 生产环境
 
 **不要为了很小的性能收益，牺牲应用程序的质量！** 注意，在大多数情况下，优化代码质量比构建性能更重要。
+
+## 依赖管理
+
+### require.context
+require.context() 函数来创建自己的 context。可以给这个函数传入三个参数：一个要搜索的目录，一个标记表示是否还搜索其子目录， 以及一个匹配文件的正则表达式。
+
+```javascript
+// 语法
+require.context(
+  directory,
+  (useSubdirectories = true),
+  (regExp = /^\.\/.*$/),
+  (mode = 'sync')
+);
+
+// 示例
+require.context('./test', false, /\.test\.js$/);
+//（创建出）一个 context，其中文件来自 test 目录，request 以 `.test.js` 结尾。
+
+require.context('../', true, /\.stories\.js$/);
+// （创建出）一个 context，其中所有文件都来自父文件夹及其所有子级文件夹，request 以 `.stories.js` 结尾。
+```
+
+#### context module API
+一个 context module 会导出一个（require）函数，此函数可以接收一个参数：request。
+此导出函数有三个属性：resolve, keys, id。
+
+```javascript
+  // 核心源码
+  var map = {
+    './demo1.ts': './src/demos/demo1.ts',
+    './demo2.ts': './src/demos/demo2.ts'
+  };
+
+  function webpackContextResolve(req) {
+    // id 就是真实文件路径
+    var id = map[req];
+    if (!(id + 1)) {
+      // check for number or string
+      var e = new Error('Cannot find module "' + req + '".');
+      e.code = 'MODULE_NOT_FOUND';
+      throw e;
+    }
+    return id;
+  }
+  
+ // ** context 加载器，通过之前的模块加载器 加载模块(文件) 
+  function webpackContext(req) {
+    var id = webpackContextResolve(req);
+    var module = __webpack_require__(id);
+    return module;
+  }
+    // 遍历得到所有 req
+  webpackContext.keys = function webpackContextKeys() {
+    return Object.keys(map);
+  };
+  // 获取文件真实路径方法
+  webpackContext.resolve = webpackContextResolve;
+  // 该模块的 moduleId 用于 __webpack_require__ 模块加载器
+  webpackContext.id = './src/demos sync recursive \\.ts';
+  
+  // 该模块就是返回一个 context 加载器
+  module.exports = webpackContext;
+```
+
+- resolve 是一个函数，它返回 request 被解析后得到的模块 id。
+- keys 也是一个函数，它返回一个数组，**由所有可能被此 context module 处理的请求（译者注：参考下面第二段代码中的 key）组成**。
+- id 是 context module 的模块 id. 它可能在你使用 module.hot.accept 时会用到。
+
+```javascript
+function importAll(r) {
+  r.keys().forEach(r);
+}
+
+importAll(require.context('../components/', true, /\.js$/));
+```
+
+```javascript
+const cache = {};
+
+function importAll(r) {
+  r.keys().forEach((key) => (cache[key] = r(key)));
+}
+
+importAll(require.context('../components/', true, /\.js$/));
+// 在构建时(build-time)，所有被 require 的模块都会被填充到 cache 对象中。
+```
