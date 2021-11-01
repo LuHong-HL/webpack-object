@@ -493,3 +493,13 @@ function importAll(r) {
 importAll(require.context('../components/', true, /\.js$/));
 // 在构建时(build-time)，所有被 require 的模块都会被填充到 cache 对象中。
 ```
+
+## Tree Shaking 
+tree shaking 是一个术语，通常用于描述移除 JavaScript 上下文中的未引用代码(dead-code)。它依赖于 ES2015 模块语法的 静态结构 特性，例如 import 和 export。
+
+......
+
+
+
+
+
