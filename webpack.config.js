@@ -4,6 +4,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
+const webpack = require('webpack')
 
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -39,11 +40,14 @@ const config = {
         },
     },
     plugins: [
+        new webpack.ProvidePlugin({ // 通过插件提供全局变量
+          _: 'lodash'
+        }),
         new HtmlWebpackPlugin({
             template: 'index.html',
         }),
-
         new MiniCssExtractPlugin(),
+
 
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/

@@ -1,7 +1,7 @@
 import './index.scss'
 import logo from './images/logo.png'
 import { debounce } from './utils/index'
-import _ from 'lodash';
+// import _ from 'lodash';
 
 function component () {
   const element = document.createElement('div')

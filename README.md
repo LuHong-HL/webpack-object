@@ -499,6 +499,92 @@ tree shaking 是一个术语，通常用于描述移除 JavaScript 上下文中�
 
 ......
 
+## 生产环境
+
+- 生产环境 和 开发环境 有细微区分，我们还是会遵循不重复原则(Don't repeat yourself - DRY)，保留一个 "common(通用)" 配置。为了将这些配置合并在一起，我们将使用一个名为 webpack-merge 的工具。
+
+......
+
+## ECMAScript模块
+
+### 导出
+关键字 export 允许将 ESM 中的内容暴露给其他模
+
+```javascript
+export const CONSTANT = 42;
+
+export let variable = 42;
+// 对外暴露的变量为只读
+// 无法从外部修改
+
+export function fun() {
+  console.log('fun');
+}
+
+export class C extends Super {
+  method() {
+    console.log('method');
+  }
+}
+
+let a, b, other;
+export { a, b, other as c };
+
+export default 1 + 2 + 3 + more();
+```
+
+### 导入
+关键字 import 允许从其他模块获取引用到 ESM 中
+
+```javascript
+import { CONSTANT, variable } from './module.js';
+// 导入由其他模块导出的“绑定”
+// 这些绑定是动态的. 这里并非获取到了值的副本
+// 而是当将要访问“variable”时
+// 再从导入的模块中获取当前值
+
+import * as module from './module.js';
+module.fun();
+// 导入包含所有导出内容的“命名空间对象”
+
+import theDefaultValue from './module.js';
+// 导入 `default` 导出的快捷方式
+将模块标记为 ESM
+```
+
+### 将模块标记为 ESM
+Node.js 通过设置 package.json 中的属性来显式设置文件模块类型。 在 package.json 中设置 "type": "module" 会强制 package.json 下的所有文件使用 ECMAScript 模块。 设置 "type": "commonjs" 将会强制使用 CommonJS 模块。
+
+```javascript
+{
+  "type": 'module'
+}
+```
+
+## Shimming 预置依赖
+webpack compiler 能够识别遵循 ES2015 模块语法、CommonJS 或 AMD 规范编写的模块。然而，一些 third party(第三方库) 可能会引用一些全局依赖（例如 jQuery 中的 $）。因此这些 library 也可能会创建一些需要导出的全局变量。这些 "broken modules(不符合规范的模块)" 就是 shimming(预置依赖) 发挥作用的地方。
+
+### Shimming 预置全局变量
+使用 ProvidePlugin 后，能够在 webpack 编译的每个模块中，通过访问一个变量来获取一个 package。如果 webpack 看到模块中用到这个变量，它将在最终 bundle 中引入给定的 package。
+
+```javascript
+const webpack = require('webpack');
+ module.exports = {
+  plugins: [
+    new webpack.ProvidePlugin({
+      _: 'lodash',
+    }),
+  ],
+ };
+```
+### 细粒度 Shimming
+
+### 全局 Exports
+
+### 加载 Polyfills
+
+## TypeScript
+TypeScript 是 JavaScript 的超集，为其增加了类型系统，可以编译为普通 JavaScript 代码。
 
 
 
