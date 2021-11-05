@@ -586,6 +586,16 @@ const webpack = require('webpack');
 ## TypeScript
 TypeScript 是 JavaScript 的超集，为其增加了类型系统，可以编译为普通 JavaScript 代码。
 
+......
 
+## Web Workers
+Web Worker为Web内容在后台线程中运行脚本提供了一种简单的方法。线程可以执行任务而不干扰用户界面。此外，他们可以使用XMLHttpRequest执行 I/O  (尽管responseXML和channel属性总是为空)。
 
+- [Web Workers 资料](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Workers_API/Using_web_workers)
+
+## 渐进式网络应用程序
+`http-server` `workbox-webpack-plugin` 构建一个离线应用程序。
+
+## 公共路径
+`publicPath` 配置选项在各种场景中都非常有用。你可以通过它来指定应用程序中所有资源的基础路径。
 

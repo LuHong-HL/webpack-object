@@ -16,9 +16,10 @@ const stylesHandler = MiniCssExtractPlugin.loader;
 const config = {
     entry: './src/index.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'dist'), // webpack build之后代码存储在磁盘上的位置
         clean: true, // clean dist file
-        filename: '[name].[contenthash].js'
+        filename: '[name].[contenthash].js',
+        publicPath: isProduction ? 'https://cdn.example.com/assets/[fullhash]/' : '/' // 客户端访问的资源的地址
     },
     devServer: {
         open: true,
@@ -69,6 +70,11 @@ const config = {
             {
                 test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
                 type: 'asset',
+                parser: {
+                  dataUrlCondition: {
+                    maxSize: 4 * 1024 // 4kb
+                  }
+                }
             },
 
             // Add your rules for custom modules here
