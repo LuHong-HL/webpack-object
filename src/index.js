@@ -2,6 +2,15 @@ import './index.scss'
 import logo from './images/logo.png'
 import { debounce } from './utils/index'
 // import _ from 'lodash';
+import './babelTest/index'
+
+// import('componentApp/ImgTest').then(data => {
+//   console.dir(data)
+//   const { AddImg } = data
+//   document.body.appendChild(new AddImg)
+// })
+
+
 
 function component () {
   const element = document.createElement('div')
@@ -31,3 +40,6 @@ function component () {
 }
 
 document.body.appendChild(component())
+// document.body.appendChild(new Head())
+// document.body.appendChild(new ImgTest())
+
